@@ -46,12 +46,12 @@ class StanfordSegmenter:
             stdin = subprocess.PIPE,
             stderr = open(os.devnull, 'w'))
 
-    def _end_proc(self):
-        if self._proc:
+    def end(self):
+        if self._proc != None:
             self._proc.stdin.close()
             self._proc.wait()
             self._proc = None
 
     def __del__(self):
-        self._end_proc()
+        self.end()
 
