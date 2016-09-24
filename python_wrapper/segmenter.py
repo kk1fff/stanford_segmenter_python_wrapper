@@ -36,12 +36,18 @@ class StanfordSegmenter:
         path_to_slf4j_dir = os.path.dirname(os.path.abspath(self._path_to_slf4j))
         self._proc = subprocess.Popen(
             ['java',
-             '-cp', os.path.join(path_to_wrapper_dir, "*:"), StanfordSegmenter.CLASS_NAME,
+             '-cp',
+             ':'.join([ os.path.join(path_to_wrapper_dir, "*"),
+                        os.path.join(path_to_jar_dir, "*"),
+                        os.path.join(path_to_slf4j_dir, "*") ]),
+             StanfordSegmenter.CLASS_NAME,
              self._path_to_sihan_corpora_dict,
              self._path_to_dict,
              self._path_to_model],
             universal_newlines = True,
-            env={ "CLASSPATH": path_to_jar_dir + ":" + path_to_slf4j_dir + ":" + path_to_wrapper_dir },
+            env=dict(os.environ, **{
+                "CLASSPATH": path_to_jar_dir + ":" + path_to_slf4j_dir + ":" + path_to_wrapper_dir
+            }),
             stdout = subprocess.PIPE,
             stdin = subprocess.PIPE,
             stderr = open(os.devnull, 'w'))
